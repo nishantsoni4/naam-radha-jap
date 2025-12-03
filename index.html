@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Radha Jap Counter</title>
+
+    <style>
+        body {
+            background: #ffe4ec;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .count {
+            font-size: 80px;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+        button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+        }
+        .start { background: green; }
+        .stop { background: orange; }
+        .reset { background: red; }
+    </style>
+</head>
+<body>
+
+    <h1>💗 Radha Jap Counter 💗</h1>
+
+    <h2 id="lastWord">Last Word: —</h2>
+    <div class="count" id="count">0</div>
+
+    <button class="start" onclick="startListening()">Start Jap</button>
+    <button class="stop" onclick="stopListening()">Stop</button>
+    <button class="reset" onclick="resetCount()">Reset</button>
+
+    <script>
+        let count = 0;
+        let recognition;
+        let listening = false;
+
+        if ('webkitSpeechRecognition' in window) {
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.lang = "hi-IN"; // Hindi
+        } else {
+            alert("Your browser does not support Speech Recognition");
+        }
+
+        recognition.onresult = function(event) {
+            let text = event.results[event.results.length - 1][0].transcript.toLowerCase();
+
+            if (text.includes("radha")) {
+                count++;
+                document.getElementById("count").innerText = count;
+                document.getElementById("lastWord").innerText = "Last Word: Radha";
+            }
+        };
+
+        function startListening() {
+            if (!listening) {
+                recognition.start();
+                listening = true;
+            }
+        }
+
+        function stopListening() {
+            recognition.stop();
+            listening = false;
+        }
+
+        function resetCount() {
+            count = 0;
+            document.getElementById("count").innerText = count;
+            document.getElementById("lastWord").innerText = "Last Word: —";
+        }
+    </script>
+
+</body>
+</html>
