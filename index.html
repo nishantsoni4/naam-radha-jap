@@ -1,76 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Radha Jap Counter</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naam Jap Counter</title>
 
 <style>
-    body { background:#ffe4ec; font-family:Arial; text-align:center; padding-top:40px; }
-    .count { font-size:80px; font-weight:bold; margin:20px; }
-    button { padding:15px 30px; margin:10px; font-size:20px;
-             border:none; border-radius:10px; color:white; }
-    .start{background:green;} .stop{background:orange;} .reset{background:red;}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #fff3f8;
+        text-align: center;
+        user-select: none;
+    }
+    h1 {
+        color: #d6006e;
+        margin-top: 20px;
+    }
+    #tapArea {
+        width: 90%;
+        margin: auto;
+        background: #ffe6f0;
+        padding: 40px;
+        border-radius: 20px;
+        border: 2px solid #ffb3d1;
+        margin-top: 25px;
+    }
+    #today, #total {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 10px;
+        color: #d6006e;
+    }
+    #history {
+        margin-top: 20px;
+        padding: 15px;
+        background: white;
+        border: 1px solid #ffc1da;
+        border-radius: 10px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        max-height: 300px;
+        overflow-y: auto;
+        text-align: left;
+    }
+    .resetBtn {
+        background: #d6006e;
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        margin-top: 15px;
+    }
 </style>
 </head>
+
 <body>
 
-<h1>💗 Radha Jap Counter 💗</h1>
+<h1>Naam Jap Counter</h1>
 
-<h2 id="lastWord">Last Word: —</h2>
-<div class="count" id="count">0</div>
+<div id="today">Today: 0</div>
+<div id="total">Total: 0</div>
 
-<button class="start" onclick="startListening()">Start Jap</button>
-<button class="stop" onclick="stopListening()">Stop</button>
-<button class="reset" onclick="resetCount()">Reset</button>
+<div id="tapArea">
+    <h2>Tap anywhere inside this box</h2>
+    <p>Every tap = +1</p>
+</div>
+
+<button class="resetBtn" onclick="resetToday()">Reset Today</button>
+
+<h2 style="color:#d6006e;">History</h2>
+<div id="history"></div>
 
 <script>
-let count = 0;
-let listening = false;
-let recognition;
+    let today = new Date().toISOString().split("T")[0];
 
-window.onload = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-        alert("Speech Recognition is not supported on this device.");
-        return;
+    let todayCount = Number(localStorage.getItem("today_" + today)) || 0;
+    let totalCount = Number(localStorage.getItem("total_jap")) || 0;
+
+    updateDisplay();
+    loadHistory();
+
+    document.getElementById("tapArea").addEventListener("click", function () {
+        todayCount++;
+        totalCount++;
+
+        localStorage.setItem("today_" + today, todayCount);
+        localStorage.setItem("total_jap", totalCount);
+
+        updateHistory();
+        updateDisplay();
+
+        if (navigator.vibrate) navigator.vibrate(40);
+    });
+
+    function updateDisplay() {
+        document.getElementById("today").innerText = "Today: " + todayCount;
+        document.getElementById("total").innerText = "Total: " + totalCount;
     }
 
-    recognition = new webkitSpeechRecognition();
-    recognition.lang = "hi-IN";
-    recognition.continuous = true;
+    function resetToday() {
+        todayCount = 0;
+        localStorage.setItem("today_" + today, 0);
+        updateHistory();
+        updateDisplay();
+    }
 
-    recognition.onresult = (event) => {
-        let text = event.results[event.results.length - 1][0].transcript.toLowerCase();
-        console.log("Heard:", text);
+    function loadHistory() {
+        let box = document.getElementById("history");
+        box.innerHTML = "";
 
-        if (text.includes("radha")) {
-            count++;
-            document.getElementById("count").innerText = count;
-            document.getElementById("lastWord").innerText = "Last Word: Radha";
-        }
-    };
+        let keys = Object.keys(localStorage).filter(k => k.startsWith("today_"));
 
-    recognition.onerror = (e) => {
-        console.log("Error:", e.error);
-    };
-};
+        keys.sort().reverse();
 
-function startListening() {
-    recognition.start();
-    listening = true;
-    console.log("Listening...");
-}
+        keys.forEach(key => {
+            let date = key.replace("today_", "");
+            let value = localStorage.getItem(key);
+            box.innerHTML += `<div><b>${date}</b>: ${value}</div>`;
+        });
+    }
 
-function stopListening() {
-    recognition.stop();
-    listening = false;
-}
-
-function resetCount() {
-    count = 0;
-    document.getElementById("count").innerText = 0;
-    document.getElementById("lastWord").innerText = "Last Word: —";
-}
+    function updateHistory() {
+        localStorage.setItem("today_" + today, todayCount);
+        loadHistory();
+    }
 </script>
 
 </body>
 </html>
+
