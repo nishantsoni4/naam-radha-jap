@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Naam Jap Counter - Sakshi Mala</title>
+<title>Naam Jap Counter</title>
 <style>
 :root{
   --accent:#d6006e;
@@ -69,12 +69,11 @@ h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
   Hare Krishna Hare Krishna • Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare
 </div>
 
-<h1>Naam Jap Counter — Sakshi Mala</h1>
+<h1>Naam Jap Counter</h1>
 
 <div class="top-stats">
   <div class="card"><b>Taps</b><div class="val" id="tapCount">0</div></div>
   <div class="card"><b>Total Taps</b><div class="val" id="totalTaps">0</div></div>
-  <div class="card"><b>Sakshi Mala</b><div class="val" id="sakshiMala">0</div></div>
   <div class="card"><b>Today Sakshi Mala</b><div class="val" id="todayMala">0</div></div>
   <div class="card"><b>Total Sakshi Mala</b><div class="val" id="totalMala">0</div></div>
 </div>
@@ -94,15 +93,13 @@ h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
 <div id="toast"></div>
 
 <script>
-/* CONFIG */
 const TAPS_PER_MALA = 108;
 
 /* LOAD DATA */
 let tapCount = parseInt(localStorage.getItem("tapCount") || 0);
-let sakshiMalaCount = parseInt(localStorage.getItem("sakshiMalaCount") || 0);
+let totalTaps = parseInt(localStorage.getItem("totalTaps") || 0);
 let todayMala = parseInt(localStorage.getItem("todayMala") || 0);
 let totalMala = parseInt(localStorage.getItem("totalMala") || 0);
-let totalTaps = parseInt(localStorage.getItem("totalTaps") || 0);
 let lastAction = null;
 
 let savedDate = localStorage.getItem("savedDate");
@@ -115,7 +112,6 @@ if(savedDate !== todayDate){
 /* UI */
 const elTap = document.getElementById("tapCount");
 const elTotalTaps = document.getElementById("totalTaps");
-const elSakshi = document.getElementById("sakshiMala");
 const elToday = document.getElementById("todayMala");
 const elTotal = document.getElementById("totalMala");
 const elBar = document.getElementById("bar");
@@ -135,7 +131,6 @@ function handleTap(count=1){
 
   while(tapCount >= TAPS_PER_MALA){
     tapCount -= TAPS_PER_MALA;
-    sakshiMalaCount++;
     todayMala++;
     totalMala++;
     showToast("✅ 1 Sakshi Mala Complete!");
@@ -148,17 +143,14 @@ function handleTap(count=1){
 function updateDisplay(){
   elTap.innerText = tapCount;
   elTotalTaps.innerText = totalTaps;
-  elSakshi.innerText = sakshiMalaCount;
   elToday.innerText = todayMala;
   elTotal.innerText = totalMala;
-
   elBar.style.width = Math.round((tapCount/TAPS_PER_MALA)*100)+"%";
 }
 
 function saveData(){
   localStorage.setItem("tapCount", tapCount);
   localStorage.setItem("totalTaps", totalTaps);
-  localStorage.setItem("sakshiMalaCount", sakshiMalaCount);
   localStorage.setItem("todayMala", todayMala);
   localStorage.setItem("totalMala", totalMala);
   localStorage.setItem("savedDate", todayDate);
@@ -168,7 +160,6 @@ function saveData(){
 function resetToday(){
   if(confirm("Reset Today's Sakshi Mala?")){
     tapCount = 0;
-    sakshiMalaCount = 0;
     todayMala = 0;
     saveData();
     updateDisplay();
@@ -178,8 +169,8 @@ function resetToday(){
 
 function resetAll(){
   if(confirm("Reset All Data?")){
-    tapCount=0;sakshiMalaCount=0;todayMala=0;totalMala=0;totalTaps=0;
-    saveData();updateDisplay();
+    tapCount=0; totalTaps=0; todayMala=0; totalMala=0;
+    saveData(); updateDisplay();
     showToast("All data reset");
   }
 }
@@ -215,4 +206,3 @@ changeBackground();
 </script>
 </body>
 </html>
-
