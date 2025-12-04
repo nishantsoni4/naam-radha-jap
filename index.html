@@ -74,8 +74,7 @@ h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
 <div class="top-stats">
   <div class="card"><b>Taps</b><div class="val" id="tapCount">0</div></div>
   <div class="card"><b>Total Taps</b><div class="val" id="totalTaps">0</div></div>
-  <div class="card"><b>Sakshi Mala (Round Progress)</b><div class="val" id="sakshiMala">0</div></div>
-  <div class="card"><b>Rounds</b><div class="val" id="roundCount">0</div></div>
+  <div class="card"><b>Sakshi Mala</b><div class="val" id="sakshiMala">0</div></div>
   <div class="card"><b>Today Sakshi Mala</b><div class="val" id="todayMala">0</div></div>
   <div class="card"><b>Total Sakshi Mala</b><div class="val" id="totalMala">0</div></div>
 </div>
@@ -84,7 +83,7 @@ h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
 <div class="small">Tap the round button to increase counts</div>
 
 <div class="progress" aria-hidden="true"><i id="bar"></i></div>
-<div class="note">Each Sakshi Mala = 108 taps. 16 Sakshi Mala = 1 Round.</div>
+<div class="note">Each Sakshi Mala = 108 taps.</div>
 
 <div class="controls">
   <button class="btn" onclick="undoTap()">Undo Last</button>
@@ -97,12 +96,10 @@ h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
 <script>
 /* CONFIG */
 const TAPS_PER_MALA = 108;
-const MALAS_PER_ROUND = 16;
 
 /* LOAD DATA */
 let tapCount = parseInt(localStorage.getItem("tapCount") || 0);
 let sakshiMalaCount = parseInt(localStorage.getItem("sakshiMalaCount") || 0);
-let roundCount = parseInt(localStorage.getItem("roundCount") || 0);
 let todayMala = parseInt(localStorage.getItem("todayMala") || 0);
 let totalMala = parseInt(localStorage.getItem("totalMala") || 0);
 let totalTaps = parseInt(localStorage.getItem("totalTaps") || 0);
@@ -119,7 +116,6 @@ if(savedDate !== todayDate){
 const elTap = document.getElementById("tapCount");
 const elTotalTaps = document.getElementById("totalTaps");
 const elSakshi = document.getElementById("sakshiMala");
-const elRound = document.getElementById("roundCount");
 const elToday = document.getElementById("todayMala");
 const elTotal = document.getElementById("totalMala");
 const elBar = document.getElementById("bar");
@@ -142,14 +138,7 @@ function handleTap(count=1){
     sakshiMalaCount++;
     todayMala++;
     totalMala++;
-
-    if(sakshiMalaCount >= MALAS_PER_ROUND){
-      sakshiMalaCount = 0;
-      roundCount++;
-      showToast("🎉 1 Round Complete!");
-    } else {
-      showToast("✅ 1 Sakshi Mala Complete!");
-    }
+    showToast("✅ 1 Sakshi Mala Complete!");
   }
 
   saveData();
@@ -160,7 +149,6 @@ function updateDisplay(){
   elTap.innerText = tapCount;
   elTotalTaps.innerText = totalTaps;
   elSakshi.innerText = sakshiMalaCount;
-  elRound.innerText = roundCount;
   elToday.innerText = todayMala;
   elTotal.innerText = totalMala;
 
@@ -171,7 +159,6 @@ function saveData(){
   localStorage.setItem("tapCount", tapCount);
   localStorage.setItem("totalTaps", totalTaps);
   localStorage.setItem("sakshiMalaCount", sakshiMalaCount);
-  localStorage.setItem("roundCount", roundCount);
   localStorage.setItem("todayMala", todayMala);
   localStorage.setItem("totalMala", totalMala);
   localStorage.setItem("savedDate", todayDate);
@@ -191,7 +178,7 @@ function resetToday(){
 
 function resetAll(){
   if(confirm("Reset All Data?")){
-    tapCount=0;sakshiMalaCount=0;roundCount=0;todayMala=0;totalMala=0;totalTaps=0;
+    tapCount=0;sakshiMalaCount=0;todayMala=0;totalMala=0;totalTaps=0;
     saveData();updateDisplay();
     showToast("All data reset");
   }
@@ -217,7 +204,7 @@ function showToast(msg,dur=1200){
 }
 
 /* BACKGROUND AUTO CHANGE */
-let bgImages = ["images/bg3.jpg"];
+let bgImages = ["images/bg1.jpg","images/bg2.jpg","images/bg3.jpg","images/bg4.jpg"];
 let i=0;
 function changeBackground(){
   document.body.style.backgroundImage = `url('${bgImages[i]}')`;
@@ -228,4 +215,3 @@ changeBackground();
 </script>
 </body>
 </html>
-
