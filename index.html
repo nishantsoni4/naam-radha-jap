@@ -1,203 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Naam Jap Counter</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naam Jap Counter - Sakshi Mala</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        text-align: center;
-        user-select: none;
-        transition: background-image 1s ease-in-out;
-    }
-
-    .mantra {
-        margin-top: 15px;
-        font-size: 22px;
-        font-weight: bold;
-        color: #b30059;
-        line-height: 1.5;
-        text-shadow: 0 1px 3px white;
-    }
-
-    h1 {
-        color: #d6006e;
-        margin-top: 8px;
-        text-shadow: 0 1px 3px white;
-    }
-
-    /* Small Round Tap Button */
-    #tapButton {
-        width: 120px;
-        height: 120px;
-        margin: auto;
-        margin-top: 25px;
-
-        background: rgba(255, 255, 255, 0.7);
-        border-radius: 50%;
-
-        border: 4px solid #ff8fc2;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        font-size: 22px;
-        color: #cc006e;
-        font-weight: bold;
-
-        transition: 0.15s ease;
-        backdrop-filter: blur(4px);
-    }
-
-    #tapButton:active {
-        transform: scale(0.90);
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    #today, #total {
-        font-size: 28px;
-        font-weight: bold;
-        margin: 10px;
-        color: #d6006e;
-        text-shadow: 0 1px 3px white;
-    }
-
-    #history {
-        margin-top: 20px;
-        padding: 15px;
-        background: rgba(255,255,255,0.85);
-        border: 1px solid #ffc1da;
-        border-radius: 10px;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-        max-height: 300px;
-        overflow-y: auto;
-        text-align: left;
-        backdrop-filter: blur(3px);
-    }
-
-    .resetBtn {
-        background: #d6006e;
-        color: white;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 10px;
-        font-size: 18px;
-        margin-top: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
+:root{
+  --accent:#d6006e;
+  --glass: rgba(255,255,255,0.75);
+}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background-size:cover;
+  background-position:center;
+  text-align:center;
+  user-select:none;
+  transition:background-image .9s ease-in-out;
+  padding:18px;
+}
+.mantra{
+  margin-top:6px; 
+  font-size:18px; 
+  color:var(--accent); 
+  font-weight:700; 
+  line-height:1.4; 
+  text-shadow:0 1px 2px #fff;
+}
+h1{ color:var(--accent); margin:6px 0 12px; text-shadow:0 1px 2px #fff; }
+.top-stats{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:12px; }
+.card{
+  background:var(--glass);
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(255,160,200,0.6);
+  min-width:120px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+}
+.card b{ display:block; font-size:14px; color:#770044; }
+.card .val{ font-size:20px; font-weight:800; color:var(--accent); margin-top:6px; }
+#tapButton{
+  width:110px; height:110px; margin:12px auto;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;color:var(--accent); font-size:20px;
+  background:rgba(255,255,255,0.8); border:4px solid #ff9fc2;
+  box-shadow:0 10px 30px rgba(0,0,0,0.18);
+  transition:transform .12s ease, box-shadow .12s;
+  backdrop-filter:blur(5px);
+}
+#tapButton:active{ transform:scale(.92); box-shadow:0 4px 12px rgba(0,0,0,0.25); }
+.small { font-size:13px; color:#6b003b; margin-top:6px; }
+.controls{ margin-top:10px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn{ background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.12); cursor:pointer;}
+.progress{ width:90%; height:12px; background:rgba(0,0,0,0.06); border-radius:10px; margin:10px auto 0; overflow:hidden;}
+.progress > i{ display:block; height:100%; background:linear-gradient(90deg,#ff9fc2,#ff66aa); width:0%; transition:width .18s linear;}
+.note{ font-size:13px; color:#88004b; margin-top:6px; }
+#toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:20px; background:rgba(0,0,0,0.8); color:white; padding:10px 14px; border-radius:8px; display:none; font-weight:700; z-index:999;}
+@media (min-width:700px){
+  .card .val{ font-size:24px; }
+  #tapButton{ width:130px; height:130px; font-size:22px; }
+}
 </style>
 </head>
-
 <body>
 
 <div class="mantra">
-    Hare Krishna Hare Krishna <br>
-    Krishna Krishna Hare Hare <br>
-    Hare Rama Hare Rama <br>
-    Rama Rama Hare Hare
+  Hare Krishna Hare Krishna • Krishna Krishna Hare Hare • Hare Rama Hare Rama • Rama Rama Hare Hare
 </div>
 
-<h1>Naam Jap Counter</h1>
+<h1>Naam Jap Counter — Sakshi Mala</h1>
 
-<div id="today">Today: 0</div>
-<div id="total">Total: 0</div>
+<div class="top-stats">
+  <div class="card"><b>Taps</b><div class="val" id="tapCount">0</div></div>
+  <div class="card"><b>Total Taps</b><div class="val" id="totalTaps">0</div></div>
+  <div class="card"><b>Sakshi Mala (Round Progress)</b><div class="val" id="sakshiMala">0</div></div>
+  <div class="card"><b>Rounds</b><div class="val" id="roundCount">0</div></div>
+  <div class="card"><b>Today Sakshi Mala</b><div class="val" id="todayMala">0</div></div>
+  <div class="card"><b>Total Sakshi Mala</b><div class="val" id="totalMala">0</div></div>
+</div>
 
-<!-- Small Tap Button -->
-<div id="tapButton">Tap</div>
+<div id="tapButton" title="Tap to count">Tap</div>
+<div class="small">Tap the round button to increase counts</div>
 
-<button class="resetBtn" onclick="resetToday()">Reset Today</button>
+<div class="progress" aria-hidden="true"><i id="bar"></i></div>
+<div class="note">Each Sakshi Mala = 108 taps. 16 Sakshi Mala = 1 Round.</div>
 
-<h2 style="color:#d6006e; text-shadow:0 1px 3px white;">History</h2>
-<div id="history"></div>
+<div class="controls">
+  <button class="btn" onclick="undoTap()">Undo Last</button>
+  <button class="btn" onclick="resetToday()">Reset Today</button>
+  <button class="btn" onclick="resetAll()">Reset All</button>
+</div>
+
+<div id="toast"></div>
 
 <script>
-    /* ---------------- BACKGROUND AUTO CHANGE ---------------- */
+/* CONFIG */
+const TAPS_PER_MALA = 108;
+const MALAS_PER_ROUND = 16;
 
-    let bgImages = [
-        "images/bg3.jpg",
-    
-    ];
+/* LOAD DATA */
+let tapCount = parseInt(localStorage.getItem("tapCount") || 0);
+let sakshiMalaCount = parseInt(localStorage.getItem("sakshiMalaCount") || 0);
+let roundCount = parseInt(localStorage.getItem("roundCount") || 0);
+let todayMala = parseInt(localStorage.getItem("todayMala") || 0);
+let totalMala = parseInt(localStorage.getItem("totalMala") || 0);
+let totalTaps = parseInt(localStorage.getItem("totalTaps") || 0);
+let lastAction = null;
 
-    let i = 0;
+let savedDate = localStorage.getItem("savedDate");
+let todayDate = new Date().toDateString();
+if(savedDate !== todayDate){
+    todayMala = 0;
+    localStorage.setItem("savedDate", todayDate);
+}
 
-    function changeBackground() {
-        document.body.style.backgroundImage = `url('${bgImages[i]}')`;
-        i = (i + 1) % bgImages.length;
+/* UI */
+const elTap = document.getElementById("tapCount");
+const elTotalTaps = document.getElementById("totalTaps");
+const elSakshi = document.getElementById("sakshiMala");
+const elRound = document.getElementById("roundCount");
+const elToday = document.getElementById("todayMala");
+const elTotal = document.getElementById("totalMala");
+const elBar = document.getElementById("bar");
+const toast = document.getElementById("toast");
+
+updateDisplay();
+
+/* TAP LOGIC */
+document.getElementById("tapButton").addEventListener("click", ()=>{
+  handleTap(1);
+});
+
+function handleTap(count=1){
+  tapCount += count;
+  totalTaps += count;
+  lastAction = {type:'tap',count:count};
+
+  while(tapCount >= TAPS_PER_MALA){
+    tapCount -= TAPS_PER_MALA;
+    sakshiMalaCount++;
+    todayMala++;
+    totalMala++;
+
+    if(sakshiMalaCount >= MALAS_PER_ROUND){
+      sakshiMalaCount = 0;
+      roundCount++;
+      showToast("🎉 1 Round Complete!");
+    } else {
+      showToast("✅ 1 Sakshi Mala Complete!");
     }
+  }
 
-    // Change every 5 seconds
-    setInterval(changeBackground, 5000);
-    changeBackground();
+  saveData();
+  updateDisplay();
+}
 
+function updateDisplay(){
+  elTap.innerText = tapCount;
+  elTotalTaps.innerText = totalTaps;
+  elSakshi.innerText = sakshiMalaCount;
+  elRound.innerText = roundCount;
+  elToday.innerText = todayMala;
+  elTotal.innerText = totalMala;
 
-    /* ---------------- COUNTER LOGIC ---------------- */
+  elBar.style.width = Math.round((tapCount/TAPS_PER_MALA)*100)+"%";
+}
 
-    let today = new Date().toISOString().split("T")[0];
+function saveData(){
+  localStorage.setItem("tapCount", tapCount);
+  localStorage.setItem("totalTaps", totalTaps);
+  localStorage.setItem("sakshiMalaCount", sakshiMalaCount);
+  localStorage.setItem("roundCount", roundCount);
+  localStorage.setItem("todayMala", todayMala);
+  localStorage.setItem("totalMala", totalMala);
+  localStorage.setItem("savedDate", todayDate);
+}
 
-    let todayCount = Number(localStorage.getItem("today_" + today)) || 0;
-    let totalCount = Number(localStorage.getItem("total_jap")) || 0;
-
+/* RESET */
+function resetToday(){
+  if(confirm("Reset Today's Sakshi Mala?")){
+    tapCount = 0;
+    sakshiMalaCount = 0;
+    todayMala = 0;
+    saveData();
     updateDisplay();
-    loadHistory();
+    showToast("Today's data reset");
+  }
+}
 
-    document.getElementById("tapButton").addEventListener("click", function () {
-        todayCount++;
-        totalCount++;
+function resetAll(){
+  if(confirm("Reset All Data?")){
+    tapCount=0;sakshiMalaCount=0;roundCount=0;todayMala=0;totalMala=0;totalTaps=0;
+    saveData();updateDisplay();
+    showToast("All data reset");
+  }
+}
 
-        localStorage.setItem("today_" + today, todayCount);
-        localStorage.setItem("total_jap", totalCount);
+/* UNDO */
+function undoTap(){
+  if(lastAction && lastAction.type==='tap'){
+    let c = lastAction.count || 1;
+    tapCount = Math.max(0,tapCount-c);
+    totalTaps = Math.max(0,totalTaps-c);
+    saveData();
+    updateDisplay();
+    showToast("Undo ✔");
+    lastAction=null;
+  } else { showToast("Nothing to undo"); }
+}
 
-        updateHistory();
-        updateDisplay();
+/* TOAST */
+function showToast(msg,dur=1200){
+  toast.innerText = msg; toast.style.display="block";
+  setTimeout(()=>{toast.style.display = "none";}, dur);
+}
 
-        if (navigator.vibrate) navigator.vibrate(40);
-    });
-
-    function updateDisplay() {
-        document.getElementById("today").innerText = "Today: " + todayCount;
-        document.getElementById("total").innerText = "Total: " + totalCount;
-    }
-
-    function resetToday() {
-        todayCount = 0;
-        localStorage.setItem("today_" + today, 0);
-        updateHistory();
-        updateDisplay();
-    }
-
-    function loadHistory() {
-        let box = document.getElementById("history");
-        box.innerHTML = "";
-
-        let keys = Object.keys(localStorage).filter(k => k.startsWith("today_"));
-
-        keys.sort().reverse();
-
-        keys.forEach(key => {
-            let date = key.replace("today_", "");
-            let value = localStorage.getItem(key);
-            box.innerHTML += `<div><b>${date}</b>: ${value}</div>`;
-        });
-    }
-
-    function updateHistory() {
-        localStorage.setItem("today_" + today, todayCount);
-        loadHistory();
-    }
+/* BACKGROUND AUTO CHANGE */
+let bgImages = ["images/bg1.jpg","images/bg2.jpg","images/bg3.jpg","images/bg4.jpg"];
+let i=0;
+function changeBackground(){
+  document.body.style.backgroundImage = `url('${bgImages[i]}')`;
+  i=(i+1)%bgImages.length;
+}
+setInterval(changeBackground,5000);
+changeBackground();
 </script>
-
 </body>
 </html>
-
-
-
